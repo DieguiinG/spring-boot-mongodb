@@ -39,7 +39,7 @@ public class UserResource {
 		return ResponseEntity.ok().body(new UserDTO(obj));
 	}
 
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Void> insert(@RequestBody UserDTO objDTO) {
 		User obj = service.fromDTO(objDTO);
 		obj = service.Insert(obj);
@@ -52,7 +52,17 @@ public class UserResource {
 	public ResponseEntity<UserDTO> delete(@PathVariable String id) {
 		User obj = service.findById(id);
 		service.delete(id);
-		
+
 		return ResponseEntity.noContent().build();
 	}
+
+	@RequestMapping(value = "{id}", method = RequestMethod.PUT)
+	public ResponseEntity<Void> update(@RequestBody UserDTO objDTO, @PathVariable String id) {
+		User obj = service.fromDTO(objDTO);
+		obj.setId(id);
+		obj = service.update(obj);
+		return ResponseEntity.noContent().build();
+
+	}
+
 }
