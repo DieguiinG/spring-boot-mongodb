@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.diegog.workshopmongo.domain.Post;
 import com.diegog.workshopmongo.domain.User;
 import com.diegog.workshopmongo.dto.UserDTO;
 import com.diegog.workshopmongo.services.UserService;
@@ -25,17 +26,16 @@ public class UserResource {
 	@Autowired
 	private UserService service;
 
-	@GetMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<List<UserDTO>> findAll() {
 		List<User> list = service.findAll();
 		List<UserDTO> listDto = list.stream().map(x -> new UserDTO(x)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listDto);
 	}
 
-	@GetMapping(value = "{id}")
-	public ResponseEntity<UserDTO> findById(@PathVariable String id) {
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public ResponseEntity<UserDTO> findByID(@PathVariable String id) {
 		User obj = service.findById(id);
-
 		return ResponseEntity.ok().body(new UserDTO(obj));
 	}
 
@@ -49,10 +49,8 @@ public class UserResource {
 	}
 
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<UserDTO> delete(@PathVariable String id) {
-		User obj = service.findById(id);
+	public ResponseEntity<Void> delete(@PathVariable String id) {
 		service.delete(id);
-
 		return ResponseEntity.noContent().build();
 	}
 
@@ -65,4 +63,10 @@ public class UserResource {
 
 	}
 
+	@RequestMapping(value = "/{id}/posts", method = RequestMethod.GET)
+	public ResponseEntity<List<Post>> findPosts(@PathVariable String id) {
+		User obj = service.findById(id);
+		return ResponseEntity.ok().body((obj.getPosts()));
+
+	}
 }
